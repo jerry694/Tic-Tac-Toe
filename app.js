@@ -40,6 +40,7 @@ const verifierVictoire = () => {
     (state.c1 == state.c2 && state.c2 == state.c3 && state.c1 > 0) ||
     (state.c1 == state.c4 && state.c4 == state.c7 && state.c1 > 0) ||
     (state.c1 == state.c5 && state.c5 == state.c9 && state.c1 > 0) ||
+    (state.c3 == state.c5 && state.c5 == state.c7 && state.c7 > 0) ||
     (state.c2 == state.c5 && state.c5 == state.c8 && state.c2 > 0) ||
     (state.c3 == state.c6 && state.c6 == state.c9 && state.c3 > 0) ||
     (state.c4 == state.c5 && state.c5 == state.c6 && state.c4 > 0) ||

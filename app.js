@@ -1,120 +1,92 @@
 // récupérer les éléments du DOM
-const cases = [...document.getElementsByClassName("case")]; // nodelist -> array
-let joueur = document.getElementById("joueur");
-let score1 = document.getElementById("score1");
-let score2 = document.getElementById("score2");
-let scoreNul = document.getElementById("scoreNul");
+let cases = []
+let joueur = $("#joueur");
+let score1 = $("#score1");
+let score2 = $("#score2");
+let scoreNul = $("#scoreNul");
+var grid = $("#grid");
 
-// mémoire des stats du jeu
-let state = {
-  joueurEnCours: 1,
-  scoreJ1: 0,
-  scoreJ2: 0,
-  matchNul: 0,
-  c1: 0,
-  c2: 0,
-  c3: 0,
-  c4: 0,
-  c5: 0,
-  c6: 0,
-  c7: 0,
-  c8: 0,
-  c9: 0,
-};
+var mapState = new Map();//Declrtion de l carte de jeux
 
-const resetState = () => {
-  joueurEnCours = 1;
-  state.c1 = 0;
-  state.c2 = 0;
-  state.c3 = 0;
-  state.c4 = 0;
-  state.c5 = 0;
-  state.c6 = 0;
-  state.c7 = 0;
-  state.c8 = 0;
-  state.c9 = 0;
-};
 
-const verifierVictoire = () => {
-  if (
-    (state.c1 == state.c2 && state.c2 == state.c3 && state.c1 > 0) ||
-    (state.c1 == state.c4 && state.c4 == state.c7 && state.c1 > 0) ||
-    (state.c1 == state.c5 && state.c5 == state.c9 && state.c1 > 0) ||
-    (state.c3 == state.c5 && state.c5 == state.c7 && state.c7 > 0) ||
-    (state.c2 == state.c5 && state.c5 == state.c8 && state.c2 > 0) ||
-    (state.c3 == state.c6 && state.c6 == state.c9 && state.c3 > 0) ||
-    (state.c4 == state.c5 && state.c5 == state.c6 && state.c4 > 0) ||
-    (state.c7 == state.c8 && state.c8 == state.c9 && state.c7 > 0)
-  ) {
-    console.log("winner !");
-    return true;
-  } else if (
-    state.c1 !== 0 &&
-    state.c2 !== 0 &&
-    state.c3 !== 0 &&
-    state.c4 !== 0 &&
-    state.c5 !== 0 &&
-    state.c6 !== 0 &&
-    state.c7 !== 0 &&
-    state.c8 !== 0 &&
-    state.c9 !== 0
-  ) {
-    return null;
-  } else {
-    return false;
+$(document).ready(function () {
+  init();
+  cases.forEach((el) => {
+    el.addEventListener("click", jouerCase);
+  });
+
+});
+
+function init() {
+
+  mapState.set('taille', prompt("Entrer la taille"));  // Demander à l'utilisateur d'entrer la taille
+  $("#grid").width(`${6 * mapState.get("taille")}rem`);// J'arrnce le damier en fonction de la taille choisi
+
+  //J'initialise donc la carte de jeu
+  mapState.set('joueurEnCours', 1);
+  mapState.set('scoreJ1', 0);
+  mapState.set('scoreJ2', 0);
+  mapState.set('matchNul', 0);
+  mapState.set('nbrepionJoue', 0);
+
+  for (let i = 1; i <= mapState.get("taille") ** 2; i++) {// Je creer les carreaux de jeux dynamiquement
+    var nouvelElement = $("<div>")
+      .addClass("case")   
+      .attr("id", "c" + i) 
+
+    mapState.set('c' + i, 0);
+    grid.append(nouvelElement);
   }
-};
+
+  cases = [...document.getElementsByClassName("case")]; // nodelist -> array
+  console.log(cases)
+  console.log(mapState)
+}
 
 const jouerCase = (e) => {
   let idCase = e.target.id;
+  console.log(idCase)
 
-  // si case déjà jouée on ne fait rien
-  if (state[idCase] !== 0) return;
+  if (mapState.get(idCase) !== 0) return;  // si case déjà jouée on ne fait rien
 
-  state[idCase] = state.joueurEnCours;
+  mapState.set(idCase, mapState.joueurEnCours);
+  play(e)
 
-  let isVctoire = verifierVictoire();
 
-  if (isVctoire === true) {
-    // si victoire
+}
 
-    alert("Le gagnant est le joueur " + state.joueurEnCours);
+function play(e) {// ici j'utilise l'operteur ternaire
+  
+  mapState.joueurEnCours = (mapState.joueurEnCours === 1) ? 2 : 1;// Vérification du joueur : si c'est le joueur 1 ou 2
+  $(e.target).text((mapState.joueurEnCours === 1) ? "X" : "O");//Je remplace la valeur de jeux
+  joueur.text(mapState.joueurEnCours);
 
-    if (state.joueurEnCours == 1) {
-      state.scoreJ1++;
-      score1.textContent = state.scoreJ1;
-    } else {
-      state.scoreJ2++;
-      score2.textContent = state.scoreJ2;
-    }
+ 
+  mapState.set("nbrepionJoue", mapState.get("nbrepionJoue") + 1); // Mise à jour du nombre de pions joués
 
-    resetState();
-    cases.forEach((c) => (c.textContent = ""));
-  } else if (isVctoire === null) {
-    // si nul
+  check();
+}
 
-    alert("Match nul !");
+function check(){//ici j'effectue des verification
+  if(mapState.get("nbrepionJoue")==mapState.get("taille")**2){//je verifie si on a joue sur tous les espaces du jeux
 
-    state.matchNul++;
-    scoreNul.textContent = state.matchNul;
-    joueur.textContent = "1";
+    reInit() //Je recommence la partie
 
-    resetState();
-    cases.forEach((c) => (c.textContent = ""));
-  } else if (isVctoire === false) {
-    // sinon on continue le jeu
-    if (state.joueurEnCours == 1) {
-      state.joueurEnCours = 2;
-      e.target.textContent = "X";
-      joueur.textContent = "2";
-    } else {
-      state.joueurEnCours = 1;
-      e.target.textContent = "O";
-      joueur.textContent = "1";
-    }
+    return alert("Partie termine")
   }
-};
+}
 
-cases.forEach((el) => {
-  el.addEventListener("click", jouerCase);
-});
+function reInit(){ //ici je reinitialise le jeu
+  
+  mapState.set('joueurEnCours', 1);
+  mapState.set('scoreJ1', 1);
+  mapState.set('scoreJ2', 0);
+  mapState.set('matchNul', 0);
+  mapState.set('nbrepionJoue', 0);
+
+  for (let i = 1; i <= mapState.get("taille") ** 2; i++) {
+    mapState.set('c' + i, 0);
+    $('#c' + i).text("");
+  }
+}
+

@@ -25,7 +25,7 @@ function creerListeTailleN(n) {
 function init() {
 
   // mapState.set('taille', prompt("Entrer la taille"));  // Demander à l'utilisateur d'entrer la taille
-  mapState.set('taille', 4);
+  mapState.set('taille', 3);
   $("#grid").width(`${6 * mapState.get("taille")}rem`);// J'arrnce le damier en fonction de la taille choisi
 
   //J'initialise donc la carte de jeu
@@ -56,6 +56,8 @@ function init() {
   console.log(mapStateCart)
   console.log(cases)
   console.log(mapState)
+
+  console.log(compterOccurrencesConsecutives(mapStateCart[2]));
 }
 
 const jouerCase = (e) => {
@@ -76,18 +78,33 @@ const jouerCase = (e) => {
 }
 
 function play(e) {// ici j'utilise l'operteur ternaire
+  let ligne = parseInt(e.target.id.split("-")[0])
+  let colonne = parseInt(e.target.id.split("-")[1])
 
-    mapStateCart[e.target.id.split("-")[0]][e.target.id.split("-")[1]] = mapState.get("joueurEnCours")
-    actionJouer("#" + e.target.id)
-    console.log(mapStateCart)
+  mapStateCart[ligne][colonne] = mapState.get("joueurEnCours")
+  actionJouer("#" + e.target.id)
+  console.log(mapStateCart)
+
+
+
+
+
 }
 
-function check() {//ici j'effectue des verification
+function check(id) {//ici j'effectue des verification
   terrainPlein()
+  compter(id.substring(1))
+  victoire()
 }
-function terrainPlein() {
-  if (mapState.get("nbrepionJoue") == mapState.get("taille") ** 2 -1) {//je verifie si on a joue sur tous les espaces du jeux
 
+function terrainPlein() {
+  if (mapState.get("nbrepionJoue") == mapState.get("taille") ** 2) {//je verifie si on a joue sur tous les espaces du jeux
+    if (mapState.get('scoreJ1') > mapState.get('scoreJ2')) {
+      alert("Partie termine J1Gagne")
+    }
+    else {
+      alert("Partie termine J2Gagne")
+    }
     reInit() //Je recommence la partie
 
     return alert("Partie termine")
@@ -101,6 +118,8 @@ function reInit() { //ici je reinitialise le jeu
   mapState.set('scoreJ2', 0);
   mapState.set('matchNul', 0);
   mapState.set('nbrepionJoue', 0);
+  $("#score1").text(0)
+  $("#score2").text(0)
   debutPartie = true
 
 
@@ -126,7 +145,7 @@ function actionJouer(id) {
   joueur.text(mapState.get("joueurEnCours"));
   mapState.set("nbrepionJoue", mapState.get("nbrepionJoue") + 1); // Mise à jour du nombre de pions joués
 
-  check();
+  check(id);
 }
 
 function verifActionJouer(id) {
@@ -157,3 +176,159 @@ function verifActionJouer(id) {
   return false
 }
 
+
+
+
+function compterOccurrencesConsecutives(tableau) {
+  let occurrences = {};
+  let currentSymbol = null;
+  let currentLength = 0;
+  let maxLength = 0;
+  occurrences["0"] = 0
+  occurrences["1"] = 0
+  occurrences["2"] = 0
+
+  for (let i = 0; i < tableau.length; i++) {
+    const symbol = tableau[i];
+
+    if (symbol === currentSymbol) {
+      // Si le symbole courant est le même que le symbole précédent, incrémenter la longueur actuelle
+      currentLength++;
+    } else {
+      // Si le symbole change, mettre à jour les occurrences et réinitialiser la longueur actuelle
+      occurrences[currentSymbol] = Math.max(occurrences[currentSymbol] || 0, currentLength);
+      currentSymbol = symbol;
+      currentLength = 1;
+    }
+
+    // Mettre à jour la longueur maximale
+    maxLength = Math.max(maxLength, currentLength);
+  }
+
+  // Mettre à jour les occurrences pour le dernier symbole
+  occurrences[currentSymbol] = Math.max(occurrences[currentSymbol] || 0, currentLength);
+
+  return occurrences;
+}
+
+function construireColonne(matrice, indiceColonne) {
+  const colonne = [];
+
+  // Vérifier que l'indice de la colonne est valide
+  if (indiceColonne < 0 || indiceColonne >= matrice[0].length) {
+    console.error("Indice de colonne invalide");
+    return colonne;
+  }
+
+  // Parcourir les lignes de la matrice et récupérer les éléments de la colonne
+  for (let i = 0; i < matrice.length; i++) {
+    colonne.push(matrice[i][indiceColonne]);
+  }
+
+  return colonne;
+}
+
+function construireLigne(matrice, indiceLigne) {
+  const ligne = [];
+
+  // Vérifier que l'indice de la ligne est valide
+  if (indiceLigne < 0 || indiceLigne >= matrice.length) {
+    console.error("Indice de ligne invalide");
+    return ligne;
+  }
+
+  // Copier les éléments de la ligne dans le tableau résultat
+  ligne.push(...matrice[indiceLigne]);
+
+  return ligne;
+}
+
+function extraireDiagonale(matrice, coordonnees) {
+  let [x, y] = coordonnees;
+  let diagonale = [];
+  let n = matrice.length;
+  let m = matrice[0].length;
+
+  // Vérifier que les coordonnées sont valides
+  if (x < 0 || x >= n || y < 0 || y >= m) {
+    console.error("Coordonnées invalides");
+    return diagonale;
+  }
+
+  // Extraire la diagonale en haut à gauche de la position donnée
+  for (let i = 0; x - i >= 0 && y - i >= 0; i++) {
+    diagonale.unshift(matrice[x - i][y - i]);
+  }
+
+  // Extraire la diagonale en bas à droite de la position donnée (sans dupliquer l'élément central)
+  for (let i = 1; x + i < n && y + i < m; i++) {
+    diagonale.push(matrice[x + i][y + i]);
+  }
+
+  return diagonale;
+}
+
+function extraireAntidiagonale(matrice, coordonnees) {
+  let [x, y] = coordonnees;
+  let antidiagonale = [];
+  let n = matrice.length;
+  let m = matrice[0].length;
+
+  // Vérifier que les coordonnées sont valides
+  if (x < 0 || x >= n || y < 0 || y >= m) {
+    console.error("Coordonnées invalides");
+    return antidiagonale;
+  }
+
+  // Extraire l'antidiagonale en haut à droite de la position donnée
+  for (let i = 0; x - i >= 0 && y + i < m; i++) {
+    antidiagonale.unshift(matrice[x - i][y + i]);
+  }
+
+  // Extraire l'antidiagonale en bas à gauche de la position donnée (sans dupliquer l'élément central)
+  for (let i = 1; x + i < n && y - i >= 0; i++) {
+    antidiagonale.push(matrice[x + i][y - i]);
+  }
+
+  return antidiagonale;
+}
+
+function compterPoint(listeJeux) {
+  // {0: 2, 1: 1, 2: 0, null: 0}
+  let max = {}
+  max = compterOccurrencesConsecutives(listeJeux)
+  if (max[1] > mapState.get('scoreJ1')) {
+    mapState.set('scoreJ1', mapState.get('scoreJ1') + 1)
+    $("#score1").text(mapState.get('scoreJ1'))
+  }
+  if (max[2] > mapState.get('scoreJ2')) {
+    mapState.set('scoreJ2', mapState.get('scoreJ2') + 1)
+    $("#score2").text(mapState.get('scoreJ2'))
+  }
+
+}
+
+function compter(id) {
+  let ligne = parseInt(id.split("-")[0])
+  let colonne = parseInt(id.split("-")[1])
+
+  console.log(construireLigne(mapStateCart, ligne))
+  console.log(construireColonne(mapStateCart, colonne))
+  console.log(extraireDiagonale(mapStateCart, [ligne, colonne]))
+  console.log(extraireAntidiagonale(mapStateCart, [ligne, colonne]))
+  compterPoint(construireLigne(mapStateCart, ligne))
+  compterPoint(construireColonne(mapStateCart, colonne))
+  compterPoint(extraireDiagonale(mapStateCart, [ligne, colonne]))
+  compterPoint(extraireAntidiagonale(mapStateCart, [ligne, colonne]))
+  // console.log(id)
+}
+function victoire() {
+  if (mapState.get('scoreJ1') == mapState.get('taille')) {
+    alert("gagne 🎇🎆🎇")
+    reInit()
+  }
+  else if (mapState.get('scoreJ2') == mapState.get('taille')) {
+    alert("gagne 🎟🎟🎟")
+    reInit()
+  }
+}

@@ -10,12 +10,24 @@ var grid = $("#grid");
 let debutPartie = true
 var mapState = new Map();//Declrtion de l carte de jeux
 var mapStateCart = [];//Declrtion de l carte de jeux
+var taille
 
 
 $(document).ready(function () {
-  init();
-  cases.forEach((el) => {
-    el.addEventListener("click", jouerCase);
+  $("#btnSoumettre").click(function () {
+    var taille = $("#champTexte").val();
+    window.taille = taille;;
+    $("#monFormulaire").hide();
+    mapState.set('taille', parseInt(taille))
+    console.log('Taille enregistrée : ' + taille);
+
+    init()
+
+
+    cases.forEach((el) => {
+      el.addEventListener("click", jouerCase);
+    });
+
   });
 
 });
@@ -26,10 +38,10 @@ function creerListeTailleN(n) {
 }
 function init() {
 
-  mapState.set('taille', prompt("Entrer la taille"));  // Demander à l'utilisateur d'entrer la taille
-  // mapState.set('taille', 3);
+  mapState.set('taille', parseInt(taille));  // Demander à l'utilisateur d'entrer la taille
+  // mapState.set('taille', prompt("taille"));
   $("#grid").width(`${6 * mapState.get("taille")}rem`);// J'arrnce le damier en fonction de la taille choisi
-
+  console.log(mapState.get("taille"))
   //J'initialise donc la carte de jeu
   mapState.set('joueurEnCours', 1);
   mapState.set('scoreJ1', 0);
@@ -76,7 +88,7 @@ const jouerCase = (e) => {
     play(e)
   }
   else {
-    console.log("coup pas possible 😂")
+    alert("Ce coup n'est pas possible 😂")
   }
 
 }
@@ -103,8 +115,8 @@ function check(id) {//ici j'effectue des verification
 
 function terrainPlein() {
   if (mapState.get("nbrepionJoue") == mapState.get("taille") ** 2) {//je verifie si on a joue sur tous les espaces du jeux
-    console.log( mapState.get('scoreJ1'))
-    console.log( mapState.get('scoreJ2'))
+    console.log(mapState.get('scoreJ1'))
+    console.log(mapState.get('scoreJ2'))
     if (mapState.get('scoreJ1') > mapState.get('scoreJ2')) {
       mapState.set('v1', mapState.get('v1') + 1)
       $("#v1").text(mapState.get('v1'))

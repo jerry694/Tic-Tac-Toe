@@ -63,7 +63,7 @@ p:first-of-type {
   color: darkcyan;
 }
 
-#btnSoumettre {
+#btnSoumettre,#btnReinit {
   background-color: darkcyan;
   color: white;
   padding: 0.5rem 1rem;
@@ -77,4 +77,9 @@ p:first-of-type {
 
 #btnSoumettre:hover {
   background-color: #006666;
+}
+.case-gagnante {
+  background-color: gold;
+  color: white;
+  /* Ajoutez d'autres styles de mise en surbrillance selon vos préférences */
 }

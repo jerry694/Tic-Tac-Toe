@@ -29,8 +29,14 @@ $(document).ready(function () {
     });
 
   });
+  
+  $("#btnReinit").hide()
 
 });
+
+  $("#btnReinit").click(function () {
+    reInit();
+  });
 function creerListeTailleN(n) {
   return Array.from({ length: n }, () => (
     Array.from({ length: n }, () => (0))
@@ -42,8 +48,9 @@ function init() {
   // mapState.set('taille', prompt("taille"));
   $("#grid").width(`${6 * mapState.get("taille")}rem`);// J'arrnce le damier en fonction de la taille choisi
   console.log(mapState.get("taille"))
+
   //J'initialise donc la carte de jeu
-  mapState.set('joueurEnCours', 1);
+  mapState.set('joueurEnCours', Math.floor(Math.random() * 2) + 1);
   mapState.set('scoreJ1', 0);
   mapState.set('scoreJ2', 0);
   mapState.set('v1', 0);
@@ -72,7 +79,6 @@ function init() {
   console.log(mapStateCart)
   console.log(cases)
   console.log(mapState)
-
   console.log(compterOccurrencesConsecutives(mapStateCart[2]));
 }
 
@@ -120,12 +126,17 @@ function terrainPlein() {
     if (mapState.get('scoreJ1') > mapState.get('scoreJ2')) {
       mapState.set('v1', mapState.get('v1') + 1)
       $("#v1").text(mapState.get('v1'))
-      alert("Partie termine J1Gagne")
+      alert("Joueur 1 gagne 🎇🎆🎇");
+      mettreEnSurbrillance(1)
+      $("#btnReinit").show()
+
     }
     else if (mapState.get('scoreJ1') < mapState.get('scoreJ2')) {
       mapState.set('v2', mapState.get('v2') + 1)
       $("#v2").text(mapState.get('v2'))
-      alert("Partie termine J2Gagne")
+      alert("Joueur 2 gagne 🎟🎟🎟");
+      mettreEnSurbrillance(2)
+      $("#btnReinit").show()
     }
     else {
       mapState.set('matchNul', mapState.get('matchNul') + 1)
@@ -140,7 +151,7 @@ function terrainPlein() {
 
 function reInit() { //ici je reinitialise le jeu
 
-  mapState.set('joueurEnCours', 1);
+  mapState.set('joueurEnCours', Math.floor(Math.random() * 2) + 1);
   mapState.set('scoreJ1', 1);
   mapState.set('scoreJ2', 0);
   mapState.set('matchNul', 0);
@@ -153,6 +164,7 @@ function reInit() { //ici je reinitialise le jeu
   for (let i = 0; i < mapState.get("taille"); i++) {// Je creer les carreaux de jeux dynamiquement
     for (let j = 0; j < mapState.get("taille"); j++) {
       $("#" + i + "-" + j).text("");
+      $("#" + i + "-" + j).removeClass("case-gagnante");
     }
 
   }
@@ -351,15 +363,31 @@ function compter(id) {
 }
 function victoire() {
   if (mapState.get('scoreJ1') == mapState.get('taille')) {
-    alert("gagne 🎇🎆🎇")
+    alert("Joueur 1 gagne 🎇🎆🎇");
     mapState.set('v1', mapState.get('v1') + 1)
     $("#v1").text(mapState.get('v1'))
-    reInit()
+    // reInit()
+    mettreEnSurbrillance(1)
+    $("#btnReinit").show()
   }
   else if (mapState.get('scoreJ2') == mapState.get('taille')) {
-    alert("gagne 🎟🎟🎟")
+    alert("Joueur 2 gagne 🎟🎟🎟");
     mapState.set('v2', mapState.get('v2') + 1)
     $("#v2").text(mapState.get('v2'))
-    reInit()
+    mettreEnSurbrillance(2)
+    $("#btnReinit").show()
+
+    // reInit()
+  }
+}
+function mettreEnSurbrillance(id) {
+  for (let i = 0; i < mapState.get("taille"); i++) {// Je creer les carreaux de jeux dynamiquement
+    for (let j = 0; j < mapState.get("taille"); j++) {
+      if (mapStateCart[i][j] == id) {
+
+        $("#" + i + "-" + j).addClass("case-gagnante");
+      }
+    }
+
   }
 }

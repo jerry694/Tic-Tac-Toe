@@ -24,8 +24,8 @@ function creerListeTailleN(n) {
 }
 function init() {
 
-  // mapState.set('taille', prompt("Entrer la taille"));  // Demander à l'utilisateur d'entrer la taille
-  mapState.set('taille', 3);
+  mapState.set('taille', prompt("Entrer la taille"));  // Demander à l'utilisateur d'entrer la taille
+  // mapState.set('taille', 3);
   $("#grid").width(`${6 * mapState.get("taille")}rem`);// J'arrnce le damier en fonction de la taille choisi
 
   //J'initialise donc la carte de jeu
@@ -102,8 +102,11 @@ function terrainPlein() {
     if (mapState.get('scoreJ1') > mapState.get('scoreJ2')) {
       alert("Partie termine J1Gagne")
     }
-    else {
+    else if (mapState.get('scoreJ1') < mapState.get('scoreJ2')) {
       alert("Partie termine J2Gagne")
+    }
+    else{
+      alert("Partie termine Nul")
     }
     reInit() //Je recommence la partie
 

@@ -4,6 +4,8 @@ let joueur = $("#joueur");
 let score1 = $("#score1");
 let score2 = $("#score2");
 let scoreNul = $("#scoreNul");
+let v1 = $("#v1");
+let v2 = $("#v2");
 var grid = $("#grid");
 let debutPartie = true
 var mapState = new Map();//Declrtion de l carte de jeux
@@ -32,6 +34,8 @@ function init() {
   mapState.set('joueurEnCours', 1);
   mapState.set('scoreJ1', 0);
   mapState.set('scoreJ2', 0);
+  mapState.set('v1', 0);
+  mapState.set('v2', 0);
   mapState.set('matchNul', 0);
   mapState.set('nbrepionJoue', 0);
 
@@ -92,20 +96,28 @@ function play(e) {// ici j'utilise l'operteur ternaire
 }
 
 function check(id) {//ici j'effectue des verification
-  terrainPlein()
   compter(id.substring(1))
+  terrainPlein()
   victoire()
 }
 
 function terrainPlein() {
   if (mapState.get("nbrepionJoue") == mapState.get("taille") ** 2) {//je verifie si on a joue sur tous les espaces du jeux
+    console.log( mapState.get('scoreJ1'))
+    console.log( mapState.get('scoreJ2'))
     if (mapState.get('scoreJ1') > mapState.get('scoreJ2')) {
+      mapState.set('v1', mapState.get('v1') + 1)
+      $("#v1").text(mapState.get('v1'))
       alert("Partie termine J1Gagne")
     }
     else if (mapState.get('scoreJ1') < mapState.get('scoreJ2')) {
+      mapState.set('v2', mapState.get('v2') + 1)
+      $("#v2").text(mapState.get('v2'))
       alert("Partie termine J2Gagne")
     }
-    else{
+    else {
+      mapState.set('matchNul', mapState.get('matchNul') + 1)
+      $("#scoreNul").text(mapState.get('matchNul'))
       alert("Partie termine Nul")
     }
     reInit() //Je recommence la partie
@@ -146,9 +158,9 @@ function actionJouer(id) {
   $(id).text((mapState.get("joueurEnCours") === 1) ? "X" : "O");//Je remplace la valeur de jeux
   mapState.set("joueurEnCours", mapState.get("joueurEnCours") === 1 ? 2 : 1);// Vérification du joueur : si c'est le joueur 1 ou 2
   joueur.text(mapState.get("joueurEnCours"));
+  check(id);
   mapState.set("nbrepionJoue", mapState.get("nbrepionJoue") + 1); // Mise à jour du nombre de pions joués
 
-  check(id);
 }
 
 function verifActionJouer(id) {
@@ -328,10 +340,14 @@ function compter(id) {
 function victoire() {
   if (mapState.get('scoreJ1') == mapState.get('taille')) {
     alert("gagne 🎇🎆🎇")
+    mapState.set('v1', mapState.get('v1') + 1)
+    $("#v1").text(mapState.get('v1'))
     reInit()
   }
   else if (mapState.get('scoreJ2') == mapState.get('taille')) {
     alert("gagne 🎟🎟🎟")
+    mapState.set('v2', mapState.get('v2') + 1)
+    $("#v2").text(mapState.get('v2'))
     reInit()
   }
 }

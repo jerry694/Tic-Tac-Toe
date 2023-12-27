@@ -36,7 +36,9 @@ $(document).ready(function () {
   });
   
   $("#btnReinit").hide()
-
+  $("#info").click(function(){
+    alert("❌Joueur 1     ⭕Joueur 2")
+  })
 });
 
   $("#btnReinit").click(function () {

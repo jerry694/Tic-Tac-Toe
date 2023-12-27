@@ -17,33 +17,36 @@ $(document).ready(function () {
   $("#btnSoumettre").click(function () {
     var taille = $("#champTexte").val();
     window.taille = taille;
-    if(taille>=4){
-          $("#monFormulaire").hide();
-    mapState.set('taille', parseInt(taille))
-    console.log('Taille enregistrée : ' + taille);
+    if (taille >= 4) {
+      
+      $("#infoJeux").show()
+      $("#monFormulaire").hide();
+      mapState.set('taille', parseInt(taille))
+      console.log('Taille enregistrée : ' + taille);
 
-    init()
+      init()
 
 
-    cases.forEach((el) => {
-      el.addEventListener("click", jouerCase);
-    });}
-    else{
+      cases.forEach((el) => {
+        el.addEventListener("click", jouerCase);
+      });
+    }
+    else {
       alert("Entrer une taille superieur a 4 🎭🎭🎭")
     }
 
 
   });
-  
+
   $("#btnReinit").hide()
-  $("#info").click(function(){
+  $("#info").click(function () {
     alert("❌Joueur 1     ⭕Joueur 2")
   })
 });
 
-  $("#btnReinit").click(function () {
-    reInit();
-  });
+$("#btnReinit").click(function () {
+  reInit();
+});
 function creerListeTailleN(n) {
   return Array.from({ length: n }, () => (
     Array.from({ length: n }, () => (0))
@@ -63,7 +66,7 @@ function init() {
   mapState.set('v1', 0);
   mapState.set('v2', 0);
   mapState.set('matchNul', 0);
-  mapState.set('nbrepionJoue',1);
+  mapState.set('nbrepionJoue', 1);
 
 
   for (let i = 0; i < mapState.get("taille"); i++) {// Je creer les carreaux de jeux dynamiquement
@@ -177,19 +180,19 @@ function reInit() { //ici je reinitialise le jeu
 
 function positionMilieu() {
   const indiceMilieu = Math.ceil((mapState.get("taille")) / 2) - 1;// Calcul de l'indice du milieu du plateau
-  if((mapState.get("taille"))%2==0){
+  if ((mapState.get("taille")) % 2 == 0) {
     mapStateCart[indiceMilieu][indiceMilieu] = mapState.get("joueurEnCours")
     actionJouer("#" + indiceMilieu + "-" + indiceMilieu)
-  mapStateCart[indiceMilieu][indiceMilieu+1] = mapState.get("joueurEnCours")
-  actionJouer("#" + indiceMilieu + "-" + (indiceMilieu + 1))
-  mapStateCart[indiceMilieu+1][indiceMilieu+1] = mapState.get("joueurEnCours")
-  actionJouer("#" + (indiceMilieu+1) + "-" + (indiceMilieu+1))
-  mapStateCart[indiceMilieu+1][indiceMilieu] = mapState.get("joueurEnCours")
-  actionJouer("#" + (indiceMilieu+1) + "-" + indiceMilieu)
+    mapStateCart[indiceMilieu][indiceMilieu + 1] = mapState.get("joueurEnCours")
+    actionJouer("#" + indiceMilieu + "-" + (indiceMilieu + 1))
+    mapStateCart[indiceMilieu + 1][indiceMilieu + 1] = mapState.get("joueurEnCours")
+    actionJouer("#" + (indiceMilieu + 1) + "-" + (indiceMilieu + 1))
+    mapStateCart[indiceMilieu + 1][indiceMilieu] = mapState.get("joueurEnCours")
+    actionJouer("#" + (indiceMilieu + 1) + "-" + indiceMilieu)
   }
-  else{
-  mapStateCart[indiceMilieu][indiceMilieu] = mapState.get("joueurEnCours")
-  actionJouer("#" + indiceMilieu + "-" + indiceMilieu)
+  else {
+    mapStateCart[indiceMilieu][indiceMilieu] = mapState.get("joueurEnCours")
+    actionJouer("#" + indiceMilieu + "-" + indiceMilieu)
   }
 }
 

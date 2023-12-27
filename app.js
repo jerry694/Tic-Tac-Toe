@@ -176,6 +176,8 @@ function reInit() { //ici je reinitialise le jeu
 function positionMilieu() {
   const indiceMilieu = Math.ceil((mapState.get("taille")) / 2) - 1;// Calcul de l'indice du milieu du plateau
   if((mapState.get("taille"))%2==0){
+    mapStateCart[indiceMilieu][indiceMilieu] = mapState.get("joueurEnCours")
+    actionJouer("#" + indiceMilieu + "-" + indiceMilieu)
   mapStateCart[indiceMilieu][indiceMilieu+1] = mapState.get("joueurEnCours")
   actionJouer("#" + indiceMilieu + "-" + (indiceMilieu + 1))
   mapStateCart[indiceMilieu+1][indiceMilieu+1] = mapState.get("joueurEnCours")

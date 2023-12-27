@@ -83,3 +83,10 @@ p:first-of-type {
   color: white;
   /* Ajoutez d'autres styles de mise en surbrillance selon vos préférences */
 }
+
+input{
+  height: 2.2rem;
+  padding: 10px;
+  border: rgba(0, 0, 0, 0.573) 1.5px solid;
+  border-radius: 5px;
+}

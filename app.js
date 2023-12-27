@@ -16,8 +16,9 @@ var taille
 $(document).ready(function () {
   $("#btnSoumettre").click(function () {
     var taille = $("#champTexte").val();
-    window.taille = taille;;
-    $("#monFormulaire").hide();
+    window.taille = taille;
+    if(taille>=4){
+          $("#monFormulaire").hide();
     mapState.set('taille', parseInt(taille))
     console.log('Taille enregistrée : ' + taille);
 
@@ -26,7 +27,11 @@ $(document).ready(function () {
 
     cases.forEach((el) => {
       el.addEventListener("click", jouerCase);
-    });
+    });}
+    else{
+      alert("Entrer une taille superieur a 4 🎭🎭🎭")
+    }
+
 
   });
   
@@ -56,7 +61,7 @@ function init() {
   mapState.set('v1', 0);
   mapState.set('v2', 0);
   mapState.set('matchNul', 0);
-  mapState.set('nbrepionJoue', 0);
+  mapState.set('nbrepionJoue',1);
 
 
   for (let i = 0; i < mapState.get("taille"); i++) {// Je creer les carreaux de jeux dynamiquement
@@ -107,14 +112,11 @@ function play(e) {// ici j'utilise l'operteur ternaire
   actionJouer("#" + e.target.id)
   console.log(mapStateCart)
 
-
-
-
-
 }
 
 function check(id) {//ici j'effectue des verification
   compter(id.substring(1))
+  console.log(mapState.get("nbrepionJoue"))
   terrainPlein()
   victoire()
 }
@@ -141,11 +143,10 @@ function terrainPlein() {
     else {
       mapState.set('matchNul', mapState.get('matchNul') + 1)
       $("#scoreNul").text(mapState.get('matchNul'))
-      alert("Partie termine Nul")
+      alert("Partie termine Nul 📍📍📍")
+      $("#btnReinit").show()
     }
-    reInit() //Je recommence la partie
 
-    return alert("Partie termine")
   }
 }
 
@@ -176,6 +177,12 @@ function positionMilieu() {
   const indiceMilieu = Math.ceil((mapState.get("taille")) / 2) - 1;// Calcul de l'indice du milieu du plateau
   mapStateCart[indiceMilieu][indiceMilieu] = mapState.get("joueurEnCours")
   actionJouer("#" + indiceMilieu + "-" + indiceMilieu)
+  mapStateCart[indiceMilieu][indiceMilieu+1] = mapState.get("joueurEnCours")
+  actionJouer("#" + indiceMilieu + "-" + (indiceMilieu + 1))
+  mapStateCart[indiceMilieu+1][indiceMilieu+1] = mapState.get("joueurEnCours")
+  actionJouer("#" + (indiceMilieu+1) + "-" + (indiceMilieu+1))
+  mapStateCart[indiceMilieu+1][indiceMilieu] = mapState.get("joueurEnCours")
+  actionJouer("#" + (indiceMilieu+1) + "-" + indiceMilieu)
 }
 
 function actionJouer(id) {
@@ -366,7 +373,6 @@ function victoire() {
     alert("Joueur 1 gagne 🎇🎆🎇");
     mapState.set('v1', mapState.get('v1') + 1)
     $("#v1").text(mapState.get('v1'))
-    // reInit()
     mettreEnSurbrillance(1)
     $("#btnReinit").show()
   }
